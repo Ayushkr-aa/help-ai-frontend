@@ -99,7 +99,8 @@ export default function App() {
 
       try {
         const token = await user.getIdToken()
-        const res = await fetch('/api/chat', {
+        const baseUrl = (import.meta.env.VITE_BACKEND_URL || '').replace(/\/+$/, '');
+        const res = await fetch(`${baseUrl}/api/chat`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -120,7 +121,7 @@ export default function App() {
       } catch (err) {
         const errorMsg = {
           role: 'assistant',
-          content: `⚠️ Something went wrong: ${err.message}. Please check that the backend is running on port 8000.`,
+          content: `⚠️ Something went wrong: ${err.message}. Please check your connection or try again later.`,
           emotion: 'Error',
           sources: [],
           timestamp: Date.now(),
