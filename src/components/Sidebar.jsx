@@ -1,10 +1,10 @@
-import { MessageSquarePlus, Sparkles, BookOpen, LogOut } from 'lucide-react'
+import { MessageSquarePlus, Sparkles, BookOpen, LogOut, Trash2 } from 'lucide-react'
 import './Sidebar.css'
 
 /**
  * Sidebar — Chat session list + branding + user profile + logout.
  */
-export default function Sidebar({ sessions, activeSession, onSelectSession, onNewSession, user, onLogout }) {
+export default function Sidebar({ sessions, activeSession, onSelectSession, onNewSession, onDeleteSession, user, onLogout }) {
   // Get initial or avatar
   const displayName = user?.displayName || user?.email?.split('@')[0] || "Seeker"
   const photoURL = user?.photoURL
@@ -31,17 +31,30 @@ export default function Sidebar({ sessions, activeSession, onSelectSession, onNe
       <div className="session-list">
         <p className="session-list-label">Recent</p>
         {sessions.map((s) => (
-          <button
+          <div
             key={s.id}
             className={`session-item ${s.id === activeSession ? 'active' : ''}`}
-            onClick={() => onSelectSession(s.id)}
           >
-            <BookOpen size={14} className="session-icon" />
-            <div className="session-info">
-              <span className="session-title">{s.title}</span>
-              <span className="session-date">{s.date}</span>
+            <div
+              className="session-item-click-target"
+              onClick={() => onSelectSession(s.id)}
+            >
+              <BookOpen size={14} className="session-icon" />
+              <div className="session-info">
+                <span className="session-title">{s.title}</span>
+                <span className="session-date">{s.date}</span>
+              </div>
             </div>
-          </button>
+            {(sessions.length > 1 || s.id !== 'default') && (
+              <button
+                className="btn-delete-session"
+                onClick={(e) => onDeleteSession(s.id, e)}
+                title="Delete Conversation"
+              >
+                <Trash2 size={13} />
+              </button>
+            )}
+          </div>
         ))}
       </div>
 

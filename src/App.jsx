@@ -144,6 +144,33 @@ export default function App() {
     setActiveSession(id)
   }, [])
 
+  /** Delete a specific chat session */
+  const deleteSession = useCallback((sessionIdToDelete, e) => {
+    if (e) e.stopPropagation();
+
+    // 1. Remove messages from messageMap
+    setMessageMap((prev) => {
+      const updated = { ...prev }
+      delete updated[sessionIdToDelete]
+      return updated
+    })
+
+    // 2. Remove from sessions list and adjust activeSession
+    setSessions((prevSessions) => {
+      const filtered = prevSessions.filter((s) => s.id !== sessionIdToDelete)
+      const nextSessions = filtered.length === 0 ? DEFAULT_SESSIONS : filtered
+      
+      setActiveSession((prevActive) => {
+        if (prevActive === sessionIdToDelete) {
+          return nextSessions[0].id
+        }
+        return prevActive
+      })
+      
+      return nextSessions
+    })
+  }, [])
+
   const handleLogout = async () => {
     try {
       await signOut(auth)
@@ -178,6 +205,7 @@ export default function App() {
         activeSession={activeSession}
         onSelectSession={setActiveSession}
         onNewSession={newSession}
+        onDeleteSession={deleteSession}
         user={user}
         onLogout={handleLogout}
       />
